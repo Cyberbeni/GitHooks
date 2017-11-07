@@ -1,60 +1,39 @@
 #!/usr/bin/env python
-"""Sort a simple YAML file, keeping blocks of comments and definitions
-together.
-
-We assume a strict subset of YAML that looks like:
-
-    # block of header comments
-    # here that should always
-    # be at the top of the file
-
-    # optional comments
-    # can go here
-    key: value
-    key: value
-
-    key: value
-
-In other words, we don't sort deeper than the top layer, and might corrupt
-complicated YAML files.
+"""
+Sort #imports in the input files.
 """
 from __future__ import print_function
 
 import argparse
 
 
-QUOTES = ["'", '"']
-
-
 def sort(lines):
-    """Sort a YAML file in alphabetical order, keeping blocks together.
+    """Sort consecutive "#import"s
 
-    :param lines: array of strings (without newlines)
+    :param lines: array of strings
     :return: sorted array of strings
     """
     # make a copy of lines since we will clobber it
     lines = list(lines)
     blocks = parse_blocks(lines)
 
-    linesToWrite = []
+    new_lines = []
 
     for block in blocks:
         if block[0].startswith('#import'):
-            linesToWrite.extend(sorted(set(block), key=lambda s: s.lower()))
+            new_lines.extend(sorted(set(block), key=lambda s: s.lower()))
         else:
-            linesToWrite.extend(block)
+            new_lines.extend(block)
 
-    return linesToWrite
+    return new_lines
 
 
-def parse_block(lines, header=False):
+def parse_block(lines):
     """Parse and return a single block, popping off the start of `lines`.
 
-    If parsing a header block, we stop after we reach a line that is not a
-    comment. Otherwise, we stop after reaching an empty line.
+    Each block contains either all #import lines or all other lines
 
     :param lines: list of lines
-    :param header: whether we are parsing a header block
     :return: list of lines that form the single block
     """
     block_lines = []
