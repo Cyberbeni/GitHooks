@@ -1,0 +1,7 @@
+#!/bin/sh
+#commit-msg git hook
+#prepend branch name to commit message
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+sed -i.bak -e "1s/^/${CURRENT_BRANCH}; /" $1

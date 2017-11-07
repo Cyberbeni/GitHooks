@@ -1,0 +1,10 @@
+#!/bin/sh
+#pre-commit git hook
+#automatically sort imports in commited files
+
+CHANGED_FILES="$(git diff-index --no-commit-id --name-only --cached -r HEAD)"
+
+git stash --keep-index
+python ./.git/hooks/import_sort.py $CHANGED_FILES
+git add $CHANGED_FILES
+git stash pop
